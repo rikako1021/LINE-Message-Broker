@@ -24,7 +24,7 @@ function doPost(e) {
   
   // 設定シートのキーワードを含むかどうかで動作分岐
   const keywords = getKeywords();
-  const replyMessage = keywords.includes(userMessage) ? register(userId,userName) : push(userMessage,userName);
+  const replyMessage = keywords.includes(userMessage) ? register(userId,userName) : push(userMessage,userName,userId);
 
   const replyToken = event.replyToken;
   
@@ -62,11 +62,12 @@ function register(userId,userName){
   }
 }
 
-function push(userMessage,userName){
+function push(userMessage,userName,userId){
   const subscriber = getSubscriber();
   if(subscriber.length === 0){
     return '通知先が登録されていません';
   }
+  if(userId === '管理者のid'){
   try{
        UrlFetchApp.fetch('https://api.line.me/v2/bot/message/multicast', {
          'headers': {
@@ -88,6 +89,8 @@ function push(userMessage,userName){
     console.error(e);
     return '送信に失敗しました';
   }
+  } else {
+    return '管理者ではありません';
 }
 
 function getLineUserName(userId){
